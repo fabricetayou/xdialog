@@ -35,35 +35,35 @@ if (typeof Object.assign != 'function') {
 
 Error.stackTraceLimit = 50
 
-window.xdialog = function() {
+window.xdialog = function () {
     let dialogs = [];
     let perspectiveCounter = 0;
     let zIndex = 10000;
     let utils = {
-        newId: function() {
+        newId: function () {
             return 'xd-id-' + Math.random().toString(36).substring(2);
         },
-        newZIndex: function() {
+        newZIndex: function () {
             zIndex += 1;
             return zIndex;
         },
-        isString: function(v) {
+        isString: function (v) {
             return typeof v === 'string' || v instanceof String;
         },
-        isArray: function(v) {
+        isArray: function (v) {
             return Array.isArray(v)
         },
-        getCenterPosition: function(element) {
+        getCenterPosition: function (element) {
             return {
                 x: element.offsetLeft + element.offsetWidth / 2,
                 y: element.offsetTop + element.offsetHeight / 2
             }
         },
-        setCenterPosition: function(element, pos) {
+        setCenterPosition: function (element, pos) {
             element.style.left = (pos.x - element.offsetWidth / 2) + 'px';
             element.style.top = (pos.y - element.offsetHeight / 2) + 'px';
         },
-        debugTrace: function() {
+        debugTrace: function () {
             let trace = ''
 
             try {
@@ -81,13 +81,17 @@ window.xdialog = function() {
     // all transitions should end in 1 second, then some cleanup work or fix will be done
     let transitionTimeout = 1000;
 
-    let spinOverlayElement = createSpin();
-    let spinCount = 0;
-
     let dragAsClick = {
         timeout: 300,
         distance: 5
     }
+
+    let spinOverlayElement = null;
+    let spinCount = 0;
+
+    window.addEventListener("load", function () {
+        spinOverlayElement = createSpin();
+    });
 
     return {
         // xdialog.init(options)
@@ -376,10 +380,10 @@ window.xdialog = function() {
             buttons: null,
             extraClass: 'xd-fatal',
             effect: null,
-            ondrag: function() {
+            ondrag: function () {
                 return false;
             },
-            beforehide: function() {
+            beforehide: function () {
                 return false;
             },
         };
@@ -537,7 +541,7 @@ window.xdialog = function() {
         let buttonInfos = {};
 
         if (utils.isArray(options.buttons)) {
-            options.buttons.forEach(function(name, i) {
+            options.buttons.forEach(function (name, i) {
                 let buttonInfo = predefinedButtonInfo(name);
 
                 if (buttonInfo) {
@@ -551,7 +555,7 @@ window.xdialog = function() {
                 }
             });
         } else {
-            Object.keys(options.buttons).forEach(function(name) {
+            Object.keys(options.buttons).forEach(function (name) {
                 let buttonInfo = predefinedButtonInfo(name);
                 let value = options.buttons[name];
 
@@ -576,7 +580,7 @@ window.xdialog = function() {
 
         html += '<div class="xd-buttons">';
 
-        Object.keys(buttonInfos).forEach(function(name) {
+        Object.keys(buttonInfos).forEach(function (name) {
             if (buttonInfos[name].html) {
                 // html defined
                 html += buttonInfos[name].html;
@@ -671,7 +675,7 @@ window.xdialog = function() {
 
             let loadCount = 0;
 
-            [].slice.call(iframes).forEach(function(iframe) {
+            [].slice.call(iframes).forEach(function (iframe) {
                 iframe.addEventListener('load', function listener(ev) {
                     iframe.removeEventListener('load', listener);
                     loadCount += 1;
@@ -722,7 +726,7 @@ window.xdialog = function() {
                 }
 
                 // use setTimeout to enable css transition
-                setTimeout(function() {
+                setTimeout(function () {
                     if (dialogElement.effect.perspective) {
                         perspectiveCounter++;
 
@@ -760,7 +764,7 @@ window.xdialog = function() {
                         });
 
                         // event transitionend not always reliable, so also use setTimeout
-                        setTimeout(function() {
+                        setTimeout(function () {
                             fixChromeBlur();
                         }, transitionTimeout);
                     }
@@ -789,7 +793,7 @@ window.xdialog = function() {
             restorePerspective();
 
             if (dialogElement.effect.perspective) {
-                setTimeout(function() {
+                setTimeout(function () {
                     if (perspectiveCounter === 1) {
                         document.documentElement.classList.remove('xd-perspective');
                     }
@@ -839,13 +843,13 @@ window.xdialog = function() {
         }
 
         function fixEnterKeyEventInTextarea() {
-            [].slice.call(dialogElement.querySelectorAll('textarea')).forEach(function(textarea) {
+            [].slice.call(dialogElement.querySelectorAll('textarea')).forEach(function (textarea) {
                 textarea.addEventListener('keypress', fixEnterKeyEvent);
             });
         }
 
         function cleanEnterKeyEventInTextarea() {
-            [].slice.call(dialogElement.querySelectorAll('textarea')).forEach(function(textarea) {
+            [].slice.call(dialogElement.querySelectorAll('textarea')).forEach(function (textarea) {
                 textarea.removeEventListener('keypress', fixEnterKeyEvent);
             });
         }
@@ -872,7 +876,7 @@ window.xdialog = function() {
         function startCloseTimer() {
             stopCloseTimer();
 
-            dialog.closeTimerId = setTimeout(function() {
+            dialog.closeTimerId = setTimeout(function () {
                 dialog.closeTimerId = null;
                 close();
             }, options.timeout * 1000);
@@ -942,7 +946,7 @@ window.xdialog = function() {
                 setTimeout(checkAndReturnSrcElement, 300);
             }
 
-            setTimeout(function() {
+            setTimeout(function () {
                 let index = dialogs.indexOf(dialog);
 
                 if (index === -1) {
@@ -1211,7 +1215,7 @@ window.xdialog = function() {
 
             // Temporarily disable mouse events for IFRAME for smooth dragging
             // SEE: https://www.gyrocode.com/articles/how-to-detect-mousemove-event-over-iframe-element/
-            [].slice.call(srcElement.querySelectorAll('iframe')).forEach(function(iframe) {
+            [].slice.call(srcElement.querySelectorAll('iframe')).forEach(function (iframe) {
                 iframe.style['pointer-events'] = 'none';
             });
         }
@@ -1244,7 +1248,7 @@ window.xdialog = function() {
             document.removeEventListener('mouseup', closeDragElement);
 
             // Re-enable mouse events for IFRAME
-            [].slice.call(srcElement.querySelectorAll('iframe')).forEach(function(iframe) {
+            [].slice.call(srcElement.querySelectorAll('iframe')).forEach(function (iframe) {
                 iframe.style['pointer-events'] = 'auto';
             });
         }
