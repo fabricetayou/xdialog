@@ -89,7 +89,7 @@ window.xdialog = function () {
     let spinOverlayElement = null;
     let spinCount = 0;
 
-    window.addEventListener("load", function () {
+    window.addEventListener("DOMContentLoaded", function () {
         spinOverlayElement = createSpin();
     });
 
@@ -1114,6 +1114,12 @@ window.xdialog = function () {
      *      localStorage['x-debug-info'] = 0    // hide debug info
      */
     function startSpin() {
+        if (spinOverlayElement === null) {
+            // console.info("Wait a moment, spinOverlayElement has not been created yet ...");
+            setTimeout(startSpin, 1);
+            return;
+        }
+
         let debugInfoElement = spinOverlayElement.querySelector('.xd-debug-info')
 
         if (localStorage['x-debug-info'] === '1') {
