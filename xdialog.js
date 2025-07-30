@@ -1139,6 +1139,8 @@ window.xdialog = function () {
      * stop a spin
      */
     function stopSpin() {
+    	if(spinCount === 0)
+    		return;
         spinCount--;
 
         if (spinCount === 0) {
